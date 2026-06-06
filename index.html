@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SyntaxLaudis — Cancionero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:   #f7f3ec;
+      --parch:   #ede5d0;
+      --gold:    #b8860b;
+      --gold2:   #d4a843;
+      --brown:   #5c3d1e;
+      --ink:     #2a1f0e;
+      --muted:   #8a7560;
+      --red:     #8b1a1a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── Texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      text-align: center;
+      padding: 3.5rem 2rem 2.5rem;
+      border-bottom: 1px solid var(--gold);
+      background: linear-gradient(180deg, var(--parch) 0%, var(--cream) 100%);
+    }
+
+    header::after {
+      content: '✦ ✦ ✦';
+      display: block;
+      color: var(--gold);
+      font-size: 0.75rem;
+      letter-spacing: 0.6em;
+      margin-top: 1rem;
+    }
+
+    .site-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      color: var(--brown);
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    /* ── Search ── */
+    .search-wrap {
+      max-width: 520px;
+      margin: 2rem auto 0;
+      position: relative;
+    }
+
+    #search {
+      width: 100%;
+      padding: 0.7rem 1.2rem 0.7rem 2.8rem;
+      border: 1px solid var(--gold);
+      border-radius: 2px;
+      background: rgba(255,255,255,0.6);
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--ink);
+      outline: none;
+      transition: box-shadow 0.2s;
+    }
+
+    #search:focus { box-shadow: 0 0 0 3px rgba(184,134,11,0.15); }
+    #search::placeholder { color: var(--muted); font-style: italic; }
+
+    .search-icon {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gold);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    /* ── Main layout ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(184,134,11,0.25);
+      border-radius: 2px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.45);
+      transition: opacity 0.2s;
+    }
+
+    .section.hidden { display: none; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.4rem;
+      background: linear-gradient(90deg, var(--parch), var(--cream));
+      border-bottom: 1px solid rgba(184,134,11,0.2);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--brown);
+      text-transform: uppercase;
+    }
+
+    .section-count {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .chevron {
+      color: var(--gold);
+      font-size: 0.7rem;
+      transition: transform 0.25s;
+      margin-left: 0.8rem;
+    }
+
+    .section.collapsed .chevron { transform: rotate(-90deg); }
+    .section.collapsed .song-list { display: none; }
+
+    /* ── Song list ── */
+    .song-list {
+      list-style: none;
+      padding: 0.4rem 0;
+    }
+
+    .song-item {
+      border-bottom: 1px solid rgba(184,134,11,0.1);
+    }
+
+    .song-item:last-child { border-bottom: none; }
+    .song-item.hidden { display: none; }
+
+    .song-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.55rem 1.4rem;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .song-link:hover {
+      background: rgba(184,134,11,0.08);
+      color: var(--red);
+    }
+
+    .song-link::before {
+      content: '♩';
+      color: var(--gold2);
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+      border-top: 1px solid rgba(184,134,11,0.2);
+    }
+
+    /* ── No results ── */
+    #no-results {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-style: italic;
+      display: none;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header { padding: 2.5rem 1rem 2rem; }
+      .song-link { padding: 0.6rem 1rem; font-size: 0.95rem; }
+      .section-header { padding: 0.8rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="site-label">Coro — Iglesia Católica</p>
+  <h1>SyntaxLaudis</h1>
+  <p class="subtitle">Cancionero litúrgico</p>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Buscar canto…" autocomplete="off" />
+  </div>
+</header>
+
+<main>
+  <p id="no-results">No se encontraron cantos con ese nombre.</p>
+
+  <!-- ============================================================
+       SECCIONES Y CANTOS
+       Para agregar un canto nuevo:
+         <li class="song-item">
+           <a class="song-link" href="Seccion/Nombre_del_canto.pdf" target="_blank">Nombre del canto</a>
+         </li>
+       ============================================================ -->
+
+  <div class="section" data-section="Adoracion">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Adoración</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Adoracion/Altisimo_Senor.pdf" target="_blank">Altísimo Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Adoracion/Cantemos_al_amor_de_los_amores.pdf" target="_blank">Cantemos al amor de los amores</a></li>
+      <li class="song-item"><a class="song-link" href="Adoracion/Milagro_Eucaristico.pdf" target="_blank">Milagro Eucarístico</a></li>
+      <li class="song-item"><a class="song-link" href="Adoracion/Te_busque.pdf" target="_blank">Te busqué</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Alabanza">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Alabanza</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Alabanza/Las_mananitas.pdf" target="_blank">Las mañanitas</a></li>
+      <li class="song-item"><a class="song-link" href="Alabanza/Manos_de_gigante.pdf" target="_blank">Manos de gigante</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Aleluya">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Aleluya</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Aleluya/Aleluya_alegre.pdf" target="_blank">Aleluya alegre</a></li>
+      <li class="song-item"><a class="song-link" href="Aleluya/Aleluya_tradicional.pdf" target="_blank">Aleluya tradicional</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Aspersion">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Aspersión</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Aspersion/Agua_de_vida.pdf" target="_blank">Agua de vida</a></li>
+      <li class="song-item"><a class="song-link" href="Aspersion/Con_estas_cenizas_Senor.pdf" target="_blank">Con estas cenizas Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Aspersion/Lavame_Senor.pdf" target="_blank">Lávame Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Aspersion/Oh_Senor_Envia_Tu_Espiritu.pdf" target="_blank">Oh Señor envía tu Espíritu</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Comunion">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Comunión</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Comunion/Alegria_de_esperar.pdf" target="_blank">Alegría de esperar</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Con_nosotros_esta.pdf" target="_blank">Con nosotros está</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Descansa_en_Dios.pdf" target="_blank">Descansa en Dios</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Dichosa_tu_Maria.pdf" target="_blank">Dichosa tú María</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/El_vive.pdf" target="_blank">Él vive</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Eres_Rey.pdf" target="_blank">Eres Rey</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Estas_aqui.pdf" target="_blank">Estás aquí</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Eucaristia_Milagro_de_Amor.pdf" target="_blank">Eucaristía Milagro de Amor</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Incomparable.pdf" target="_blank">Incomparable</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Milagro_de_amor.pdf" target="_blank">Milagro de amor</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Pescador_de_hombres.pdf" target="_blank">Pescador de hombres</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Pueblo_mio.pdf" target="_blank">Pueblo mío</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Sacramento_de_la_Eucaristia.pdf" target="_blank">Sacramento de la Eucaristía</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Secuencia_pascual.pdf" target="_blank">Secuencia pascual</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Symbolum_77.pdf" target="_blank">Symbolum 77</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Te_busque.pdf" target="_blank">Te busqué</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Ya_no_eres_pan_y_vino.pdf" target="_blank">Ya no eres pan y vino</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Yo_estoy_con_ustedes.pdf" target="_blank">Yo estoy con ustedes</a></li>
+      <li class="song-item"><a class="song-link" href="Comunion/Y_no_le_creyeron.pdf" target="_blank">Y no le creyeron</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Cordero">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Cordero de Dios</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Cordero/Canto_de_paz.pdf" target="_blank">Canto de paz</a></li>
+      <li class="song-item"><a class="song-link" href="Cordero/Cordero_de_Dios_divino.pdf" target="_blank">Cordero de Dios divino</a></li>
+      <li class="song-item"><a class="song-link" href="Cordero/Cordero_de_Dios_La.pdf" target="_blank">Cordero de Dios (La)</a></li>
+      <li class="song-item"><a class="song-link" href="Cordero/Cordero_de_Dios_Panamericano.pdf" target="_blank">Cordero de Dios Panamericano</a></li>
+      <li class="song-item"><a class="song-link" href="Cordero/Cordero_de_Dios_popular.pdf" target="_blank">Cordero de Dios popular</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Entrada">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Entrada</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Entrada/Alabanzas.pdf" target="_blank">Alabanzas</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Caminare.pdf" target="_blank">Caminaré</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Como_busca_la_cierva.pdf" target="_blank">Como busca la cierva</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Cristo_sube_a_las_alturas.pdf" target="_blank">Cristo sube a las alturas</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Dios_Trino.pdf" target="_blank">Dios Trino</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/El_Espiritu_del_Senor.pdf" target="_blank">El Espíritu del Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Entrare.pdf" target="_blank">Entraré</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Himno_a_la_Trinidad.pdf" target="_blank">Himno a la Trinidad</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Hosanna_al_hijo_de_David.pdf" target="_blank">Hosanna al hijo de David</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/La_Guadalupana.pdf" target="_blank">La Guadalupana</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Nueva_Creacion.pdf" target="_blank">Nueva Creación</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Pentecostes.pdf" target="_blank">Pentecostés</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Pueblo_de_reyes.pdf" target="_blank">Pueblo de reyes</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Que_viva_mi_Cristo.pdf" target="_blank">Que viva mi Cristo</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Resucito.pdf" target="_blank">Resucitó</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Senor_mi_Dios.pdf" target="_blank">Señor mi Dios</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Venid_a_celebrar.pdf" target="_blank">Venid a celebrar</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Venimos_hoy_a_tu_altar.pdf" target="_blank">Venimos hoy a tu altar</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Ven_Senor_no_tardes_mas.pdf" target="_blank">Ven Señor no tardes más</a></li>
+      <li class="song-item"><a class="song-link" href="Entrada/Vienen_con_alegria.pdf" target="_blank">Vienen con alegría</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Gloria">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Gloria</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Gloria/Gloria_alegre_y_corto.pdf" target="_blank">Gloria alegre y corto</a></li>
+      <li class="song-item"><a class="song-link" href="Gloria/Gloria_visperas.pdf" target="_blank">Gloria vísperas</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Navidad">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Navidad</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Navidad/Adeste_Fideles.pdf" target="_blank">Adeste Fideles</a></li>
+      <li class="song-item"><a class="song-link" href="Navidad/Arrullo_para_Emmanuel.pdf" target="_blank">Arrullo para Emmanuel</a></li>
+      <li class="song-item"><a class="song-link" href="Navidad/Duerme_dulce_Nino.pdf" target="_blank">Duerme dulce Niño</a></li>
+      <li class="song-item"><a class="song-link" href="Navidad/El_nino_del_tambor.pdf" target="_blank">El niño del tambor</a></li>
+      <li class="song-item"><a class="song-link" href="Navidad/El_Nino_Dios_ha_nacido_en_Belen.pdf" target="_blank">El Niño Dios ha nacido en Belén</a></li>
+      <li class="song-item"><a class="song-link" href="Navidad/Hoy_a_la_tierra_el_cielo_envia.pdf" target="_blank">Hoy a la tierra el cielo envía</a></li>
+      <li class="song-item"><a class="song-link" href="Navidad/Noche_de_Navidad.pdf" target="_blank">Noche de Navidad</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Ofertorio">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Ofertorio</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Ofertorio/Cena_Pascual.pdf" target="_blank">Cena Pascual</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/El_regalo.pdf" target="_blank">El regalo</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Entre_tus_manos.pdf" target="_blank">Entre tus manos</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Esperamos_Senor_Tu_venida.pdf" target="_blank">Esperamos Señor tu venida</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Esto_que_te_doy.pdf" target="_blank">Esto que te doy</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Hemos_entregado_nuestras_vidas_al_senor.pdf" target="_blank">Hemos entregado nuestras vidas al Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Hoy_en_oracion.pdf" target="_blank">Hoy en oración</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Pan_de_ofrenda.pdf" target="_blank">Pan de ofrenda</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Te_ofrecemos_Senor.pdf" target="_blank">Te ofrecemos Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Te_presentamos_el_vino_y_el_pan.pdf" target="_blank">Te presentamos el vino y el pan</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Te_presentamos_padre.pdf" target="_blank">Te presentamos Padre</a></li>
+      <li class="song-item"><a class="song-link" href="Ofertorio/Tuyo_soy.pdf" target="_blank">Tuyo soy</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Reflexion">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Reflexión</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Reflexion/Andando_de_tu_mano.pdf" target="_blank">Andando de tu mano</a></li>
+      <li class="song-item"><a class="song-link" href="Reflexion/El_encuentro.pdf" target="_blank">El encuentro</a></li>
+      <li class="song-item"><a class="song-link" href="Reflexion/Sabes.pdf" target="_blank">Sabes</a></li>
+      <li class="song-item"><a class="song-link" href="Reflexion/Saname_Senor.pdf" target="_blank">Sáname Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Reflexion/Tu_Senor.pdf" target="_blank">Tú Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Reflexion/Un_dia_caminaba.pdf" target="_blank">Un día caminaba</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Salida">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Salida</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Salida/Alegrate_llena_de_gracia.pdf" target="_blank">Alégate llena de gracia</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Alegrate_Maria.pdf" target="_blank">Alégate María</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/A_Jesus_que_va_a_nacer.pdf" target="_blank">A Jesús que va a nacer</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Camino_al_monte.pdf" target="_blank">Camino al monte</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Dios_y_hombre.pdf" target="_blank">Dios y hombre</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Dulce_Madre.pdf" target="_blank">Dulce Madre</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/El_Senor_te_bendiga_y_te_guarde.pdf" target="_blank">El Señor te bendiga y te guarde</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/En_torno_a_Maria.pdf" target="_blank">En torno a María</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Estrella_de_la_manana.pdf" target="_blank">Estrella de la mañana</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Las_mananitas.pdf" target="_blank">Las mañanitas</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Perdona_a_tu_pueblo_Senor.pdf" target="_blank">Perdona a tu pueblo Señor</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Renace_la_esperanza.pdf" target="_blank">Renace la esperanza</a></li>
+      <li class="song-item"><a class="song-link" href="Salida/Viva_Cristo_Rey.pdf" target="_blank">Viva Cristo Rey</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Santo">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Santo</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Santo/Santo_alegre_y_corto.pdf" target="_blank">Santo alegre y corto</a></li>
+      <li class="song-item"><a class="song-link" href="Santo/Santo_CUC_Misa_10.pdf" target="_blank">Santo CUC Misa 10</a></li>
+      <li class="song-item"><a class="song-link" href="Santo/Santo_lento.pdf" target="_blank">Santo lento</a></li>
+      <li class="song-item"><a class="song-link" href="Santo/Santo_Ohana_Cristi.pdf" target="_blank">Santo Ohana Cristi</a></li>
+      <li class="song-item"><a class="song-link" href="Santo/Santo_popular.pdf" target="_blank">Santo popular</a></li>
+      <li class="song-item"><a class="song-link" href="Santo/Santo_solemne.pdf" target="_blank">Santo solemne</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Senor-ten-piedad">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Señor ten piedad</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Senor-ten-piedad/Kyrie_Eleison_Tradicional.pdf" target="_blank">Kyrie Eléison tradicional</a></li>
+      <li class="song-item"><a class="song-link" href="Senor-ten-piedad/Senor_ten_piedad_de_nosotros_senor.pdf" target="_blank">Señor ten piedad de nosotros</a></li>
+      <li class="song-item"><a class="song-link" href="Senor-ten-piedad/Shalua.pdf" target="_blank">Shalua</a></li>
+    </ul>
+  </div>
+
+  <div class="section" data-section="Villancicos">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title">Villancicos</span>
+      <span><span class="section-count"></span><span class="chevron">▼</span></span>
+    </div>
+    <ul class="song-list">
+      <li class="song-item"><a class="song-link" href="Villancicos/Burrito_sabanero.pdf" target="_blank">Burrito sabanero</a></li>
+      <li class="song-item"><a class="song-link" href="Villancicos/Campana_sobre_campana.pdf" target="_blank">Campana sobre campana</a></li>
+      <li class="song-item"><a class="song-link" href="Villancicos/Letanias_Posada.pdf" target="_blank">Letanías de Posada</a></li>
+      <li class="song-item"><a class="song-link" href="Villancicos/Los_peces_en_el_rio.pdf" target="_blank">Los peces en el río</a></li>
+      <li class="song-item"><a class="song-link" href="Villancicos/Tutaina.pdf" target="_blank">Tutaina</a></li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  SyntaxLaudis · Cancionero litúrgico · Uso interno del coro
+</footer>
+
+<script>
+  // ── Contador de cantos por sección ──
+  document.querySelectorAll('.section').forEach(sec => {
+    const count = sec.querySelectorAll('.song-item').length;
+    sec.querySelector('.section-count').textContent = count + ' canto' + (count !== 1 ? 's' : '');
+  });
+
+  // ── Toggle colapsar sección ──
+  function toggleSection(header) {
+    header.closest('.section').classList.toggle('collapsed');
+  }
+
+  // ── Buscador ──
+  document.getElementById('search').addEventListener('input', function () {
+    const q = this.value.toLowerCase().trim();
+    let totalVisible = 0;
+
+    document.querySelectorAll('.section').forEach(sec => {
+      let secVisible = 0;
+      sec.querySelectorAll('.song-item').forEach(item => {
+        const name = item.querySelector('.song-link').textContent.toLowerCase();
+        const match = !q || name.includes(q);
+        item.classList.toggle('hidden', !match);
+        if (match) secVisible++;
+      });
+
+      sec.classList.toggle('hidden', secVisible === 0);
+      // Expandir sección si hay búsqueda activa
+      if (q && secVisible > 0) sec.classList.remove('collapsed');
+      totalVisible += secVisible;
+    });
+
+    document.getElementById('no-results').style.display = totalVisible === 0 ? 'block' : 'none';
+  });
+</script>
+
+</body>
+</html>
