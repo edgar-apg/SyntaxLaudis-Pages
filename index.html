@@ -5,252 +5,428 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SyntaxLaudis — Cancionero</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet" />
-  <style>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Cinzel:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet" />
+    <style>
+    /* SyntaxLaudis — tema unificado con OrdoLaudis */
+
     :root {
-      --cream:   #f7f3ec;
-      --parch:   #ede5d0;
-      --gold:    #b8860b;
-      --gold2:   #d4a843;
-      --brown:   #5c3d1e;
-      --ink:     #2a1f0e;
-      --muted:   #8a7560;
+      --black:   #070707;
+      --coal:    #151515;
+      --ink:     #18120c;
+      --ivory:   #f6f1e8;
+      --paper:   #fbf8f1;
+      --white:   #ffffff;
+      --line:    #d8cbb8;
+      --gold:    #c9a14a;
+      --gold2:   #a77918;
+      --muted:   #7d715f;
       --red:     #8b1a1a;
+      --shadow:  rgba(0,0,0,0.12);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background: var(--ivory);
+    }
 
     body {
-      background-color: var(--cream);
+      min-height: 100vh;
       color: var(--ink);
+      background:
+        linear-gradient(180deg, #ffffff 0%, var(--ivory) 42%, #efe5d3 100%);
       font-family: 'EB Garamond', Georgia, serif;
       font-size: 17px;
-      line-height: 1.7;
-      min-height: 100vh;
+      line-height: 1.65;
     }
 
-    /* ── Texture overlay ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        radial-gradient(circle at 20% 10%, rgba(201,161,74,.08), transparent 26rem),
+        radial-gradient(circle at 85% 0%, rgba(0,0,0,.05), transparent 22rem),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 0;
     }
 
-    /* ── Header ── */
+    /* Header unificado con OrdoLaudis */
     header {
       position: relative;
-      text-align: center;
-      padding: 3.5rem 2rem 2.5rem;
-      border-bottom: 1px solid var(--gold);
-      background: linear-gradient(180deg, var(--parch) 0%, var(--cream) 100%);
+      z-index: 1;
+      overflow: hidden;
+      min-height: 5rem;
+      display: grid;
+      align-content: center;
+      justify-items: start;
+      padding: .62rem clamp(1rem, 5vw, 3.25rem);
+      color: var(--white);
+      background:
+        linear-gradient(112deg, rgba(7,7,7,.98) 0%, rgba(7,7,7,.96) 75%, rgba(247,243,236,.96) 75.2%, rgba(247,243,236,.96) 100%);
+      border-bottom: 3px solid var(--gold);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(201,161,74,.18), transparent 38%),
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 18rem);
+      pointer-events: none;
     }
 
     header::after {
-      content: '✦ ✦ ✦';
-      display: block;
-      color: var(--gold);
-      font-size: 0.75rem;
-      letter-spacing: 0.6em;
-      margin-top: 1rem;
+      content: '';
+      position: absolute;
+      right: clamp(.8rem, 4vw, 3.2rem);
+      bottom: .42rem;
+      color: rgba(7,7,7,.055);
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.7rem, 5vw, 3.7rem);
+      font-weight: 700;
+      letter-spacing: .08em;
+      line-height: 1;
+    }
+
+    .site-label,
+    .cross-mark,
+    h1,
+    .subtitle {
+      position: relative;
+      z-index: 1;
     }
 
     .site-label {
       font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.35em;
-      color: var(--muted);
+      font-size: .48rem;
+      letter-spacing: .18em;
+      color: var(--gold);
       text-transform: uppercase;
-      margin-bottom: 0.5rem;
+      margin-bottom: .22rem;
+      line-height: 1.05;
+    }
+
+    .cross-mark {
+      width: 1.75rem;
+      height: 1.75rem;
+      margin: 0 0 .32rem;
+      border: 1px solid rgba(201,161,74,.75);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-size: .78rem;
+      line-height: 1;
+      background: rgba(255,255,255,.045);
     }
 
     h1 {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 600;
-      color: var(--brown);
-      letter-spacing: 0.04em;
-      line-height: 1.15;
+      max-width: none;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -.03em;
+      line-height: .9;
     }
 
     .subtitle {
-      font-family: 'Cormorant Garamond', serif;
+      max-width: 42rem;
+      margin-top: .22rem;
+      color: rgba(255,255,255,.82);
+      font-family: 'EB Garamond', Georgia, serif;
       font-style: italic;
-      font-size: 1.15rem;
-      color: var(--muted);
-      margin-top: 0.4rem;
+      font-size: clamp(.78rem, 1.15vw, .92rem);
+      line-height: 1.08;
     }
 
-    /* ── Search ── */
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(1060px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1rem 0 4rem;
+    }
+
+    /* Buscador como panel, para que el header no compita con la lectura/lista */
+    .search-panel {
+      margin-bottom: 1rem;
+      border: 1px solid var(--black);
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 14px 35px rgba(0,0,0,.06);
+    }
+
     .search-wrap {
-      max-width: 520px;
-      margin: 2rem auto 0;
+      width: min(640px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1rem 0;
       position: relative;
     }
 
     #search {
       width: 100%;
-      padding: 0.7rem 1.2rem 0.7rem 2.8rem;
-      border: 1px solid var(--gold);
-      border-radius: 2px;
-      background: rgba(255,255,255,0.6);
-      font-family: 'EB Garamond', serif;
-      font-size: 1rem;
+      min-height: 2.85rem;
+      padding: .55rem 1.2rem .55rem 2.8rem;
+      border: 1px solid var(--line);
+      background: var(--paper);
       color: var(--ink);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 1.08rem;
       outline: none;
-      transition: box-shadow 0.2s;
+      transition: box-shadow .2s, border-color .2s;
     }
 
-    #search:focus { box-shadow: 0 0 0 3px rgba(184,134,11,0.15); }
-    #search::placeholder { color: var(--muted); font-style: italic; }
+    #search:focus {
+      box-shadow: 0 0 0 3px rgba(201,161,74,.24);
+      border-color: var(--gold);
+    }
+
+    #search::placeholder {
+      color: var(--muted);
+      font-style: italic;
+    }
 
     .search-icon {
       position: absolute;
-      left: 0.9rem;
+      left: 1.9rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--gold);
-      font-size: 0.9rem;
+      color: var(--gold2);
+      font-size: .9rem;
       pointer-events: none;
-    }
-
-    /* ── Main layout ── */
-    main {
-      position: relative;
       z-index: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2.5rem 1.5rem 4rem;
     }
 
-    /* ── Section ── */
+    #no-results {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-style: italic;
+      display: none;
+    }
+
     .section {
-      margin-bottom: 2.5rem;
-      border: 1px solid rgba(184,134,11,0.25);
-      border-radius: 2px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--black);
+      background: rgba(255,255,255,.82);
       overflow: hidden;
-      background: rgba(255,255,255,0.45);
-      transition: opacity 0.2s;
+      transition: opacity .2s;
+      box-shadow: 0 14px 35px rgba(0,0,0,.045);
     }
 
-    .section.hidden { display: none; }
+    .section.hidden {
+      display: none;
+    }
 
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.85rem 1.4rem;
-      background: linear-gradient(90deg, var(--parch), var(--cream));
-      border-bottom: 1px solid rgba(184,134,11,0.2);
+      gap: 1rem;
+      padding: .8rem 1rem;
+      background: var(--black);
+      border-bottom: 1px solid var(--black);
+      color: var(--white);
       cursor: pointer;
       user-select: none;
     }
 
     .section-title {
       font-family: 'Cinzel', serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--brown);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+      color: var(--white);
       text-transform: uppercase;
     }
 
     .section-count {
-      font-family: 'EB Garamond', serif;
-      font-size: 0.85rem;
-      color: var(--muted);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: .86rem;
+      color: rgba(255,255,255,.7);
       font-style: italic;
+      white-space: nowrap;
     }
 
     .chevron {
       color: var(--gold);
-      font-size: 0.7rem;
-      transition: transform 0.25s;
-      margin-left: 0.8rem;
+      font-size: .72rem;
+      transition: transform .25s;
+      margin-left: .65rem;
     }
 
-    .section.collapsed .chevron { transform: rotate(-90deg); }
-    .section.collapsed .song-list { display: none; }
+    .section.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
 
-    /* ── Song list ── */
+    .section.collapsed .song-list {
+      display: none;
+    }
+
     .song-list {
       list-style: none;
-      padding: 0.4rem 0;
+      padding: .25rem 0;
     }
 
     .song-item {
-      border-bottom: 1px solid rgba(184,134,11,0.1);
+      border-bottom: 1px solid rgba(7,7,7,.08);
     }
 
-    .song-item:last-child { border-bottom: none; }
-    .song-item.hidden { display: none; }
+    .song-item:last-child {
+      border-bottom: none;
+    }
+
+    .song-item.hidden {
+      display: none;
+    }
 
     .song-link {
       display: flex;
       align-items: center;
-      gap: 0.7rem;
-      padding: 0.55rem 1.4rem;
+      gap: .75rem;
+      padding: .58rem 1rem;
       color: var(--ink);
       text-decoration: none;
-      font-size: 1rem;
-      transition: background 0.15s, color 0.15s;
+      font-size: 1.03rem;
+      transition: background .15s, color .15s, padding-left .15s;
     }
 
     .song-link:hover {
-      background: rgba(184,134,11,0.08);
+      background: rgba(201,161,74,.12);
       color: var(--red);
+      padding-left: 1.15rem;
     }
 
     .song-link::before {
       content: '♩';
       color: var(--gold2);
-      font-size: 0.8rem;
+      font-size: .86rem;
       flex-shrink: 0;
     }
 
-    /* ── Footer ── */
     footer {
+      position: relative;
+      z-index: 1;
+      margin-top: .6rem;
       text-align: center;
-      padding: 1.5rem;
-      font-size: 0.82rem;
-      color: var(--muted);
+      padding: .65rem 1rem;
+      font-size: .76rem;
+      line-height: 1.25;
+      color: rgba(255,255,255,.72);
       font-style: italic;
-      border-top: 1px solid rgba(184,134,11,0.2);
+      background: var(--black);
+      border-top: 3px solid var(--gold);
     }
 
-    /* ── No results ── */
-    #no-results {
-      text-align: center;
-      padding: 3rem;
-      color: var(--muted);
-      font-style: italic;
-      display: none;
-    }
+    @media (max-width: 760px) {
+      header {
+        min-height: 5.7rem;
+        justify-items: center;
+        text-align: center;
+        padding: .78rem .95rem;
+        background: rgba(7,7,7,.98);
+      }
 
-    /* ── Responsive ── */
-    @media (max-width: 600px) {
-      header { padding: 2.5rem 1rem 2rem; }
-      .song-link { padding: 0.6rem 1rem; font-size: 0.95rem; }
-      .section-header { padding: 0.8rem 1rem; }
+      header::after {
+        display: none;
+      }
+
+      .site-label {
+        font-size: .42rem;
+        letter-spacing: .12em;
+        margin-bottom: .2rem;
+      }
+
+      .cross-mark {
+        margin: 0 auto .28rem;
+        width: 1.65rem;
+        height: 1.65rem;
+        font-size: .72rem;
+      }
+
+      h1 {
+        max-width: none;
+        font-size: clamp(1.55rem, 8vw, 2.05rem);
+        line-height: .95;
+      }
+
+      .subtitle {
+        font-size: .72rem;
+        line-height: 1.1;
+        margin-top: .18rem;
+      }
+
+      main {
+        width: min(100% - 1rem, 1060px);
+        padding-top: .85rem;
+      }
+
+      .search-wrap {
+        width: calc(100% - 1.5rem);
+        padding: .85rem 0;
+      }
+
+      .search-icon {
+        left: 1.55rem;
+      }
+
+      #search {
+        font-size: 1rem;
+      }
+
+      .section {
+        margin-bottom: 1rem;
+      }
+
+      .section-header {
+        padding: .72rem .85rem;
+      }
+
+      .section-title {
+        font-size: .68rem;
+        letter-spacing: .12em;
+      }
+
+      .section-count {
+        font-size: .78rem;
+      }
+
+      .song-link {
+        padding: .6rem .85rem;
+        font-size: .98rem;
+      }
+
+      footer {
+        padding: .55rem .75rem;
+        font-size: .7rem;
+        line-height: 1.2;
+      }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <p class="site-label">Coro — Iglesia Católica</p>
-  <h1>SyntaxLaudis</h1>
-  <p class="subtitle">Cancionero litúrgico</p>
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="search" placeholder="Buscar canto…" autocomplete="off" />
-  </div>
+  <p class="site-label">Cantare, Laudare, Orare — in Choro</p>
+  <div class="cross-mark">✥</div>
+  <h1>Syntax Laudis</h1>
+  <p class="subtitle">Cancionero de consulta libre</p>
 </header>
 
 <main>
+  <section class="search-panel" aria-label="Buscar cantos">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search" placeholder="Buscar canto…" autocomplete="off" />
+    </div>
+  </section>
+
   <p id="no-results">No se encontraron cantos con ese nombre.</p>
 
   <!-- ============================================================
@@ -537,7 +713,7 @@
 </main>
 
 <footer>
-  SyntaxLaudis · Cancionero litúrgico · Uso interno del coro
+  Cantos y arreglos pertenecen a sus respectivos autores. Syntax Laudis es sólo un cancionero de consulta.
 </footer>
 
 <script>
