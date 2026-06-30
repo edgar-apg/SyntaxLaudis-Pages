@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Syntax Laudis: cancionero litúrgico de consulta libre para coro, con búsqueda, índice rápido y PDF por secciones." />
+  <meta name="description" content="Syntax Laudis: cancionero litúrgico de consulta libre para coro, con búsqueda e índice por momento litúrgico." />
   <title>Syntax Laudis — Cancionero litúrgico</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -158,7 +158,6 @@
       padding: 1rem 0 4rem;
     }
 
-    .intro-card,
     .toolbar-card,
     .section {
       border: 1px solid var(--black);
@@ -166,19 +165,6 @@
       box-shadow: 0 14px 35px rgba(0, 0, 0, .045);
     }
 
-    .intro-card {
-      margin-bottom: 1rem;
-      padding: .95rem 1rem;
-    }
-
-    .intro-card p {
-      color: var(--muted);
-      font-size: .96rem;
-    }
-
-    .intro-card strong {
-      color: var(--ink);
-    }
 
     .toolbar-card {
       position: sticky;
@@ -267,6 +253,12 @@
       letter-spacing: .02em;
     }
 
+    .section-chip.active {
+      background: var(--black);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
     .tool-button:hover,
     .section-chip:hover,
     .tool-button:focus-visible,
@@ -312,6 +304,7 @@
     }
 
     .section.hidden,
+    .section.inactive,
     .song-item.hidden {
       display: none;
     }
@@ -448,6 +441,7 @@
       display: grid;
       place-items: center;
       border: 1px solid var(--gold);
+      border-radius: 999px;
       background: var(--black);
       color: var(--gold);
       font-family: var(--font-main);
@@ -587,10 +581,6 @@
   </header>
 
   <main id="catalogo">
-    <section class="intro-card" aria-label="Presentación">
-      <p><strong>Consulta rápida para coro:</strong> busca por nombre del canto o navega por momento litúrgico. Los PDFs se abren en una pestaña nueva para conservar tu lugar en el índice.</p>
-    </section>
-
     <section class="toolbar-card" aria-label="Herramientas del cancionero">
       <div class="search-wrap">
         <span class="search-icon" aria-hidden="true">⌕</span>
@@ -598,12 +588,10 @@
       </div>
 
       <div class="action-row" aria-label="Acciones rápidas">
-        <button class="tool-button" type="button" id="expand-all">Expandir todo</button>
-        <button class="tool-button secondary" type="button" id="collapse-all">Contraer todo</button>
         <button class="tool-button secondary" type="button" id="clear-search">Limpiar búsqueda</button>
       </div>
 
-      <p class="catalog-summary" id="catalog-summary" aria-live="polite">138 cantos en 15 secciones.</p>
+      <p class="catalog-summary" id="catalog-summary" aria-live="polite">Elige un momento litúrgico para mostrar sus cantos, o busca por nombre.</p>
 
       <nav class="section-nav" id="section-nav" aria-label="Índice rápido por sección"></nav>
     </section>
@@ -1184,11 +1172,12 @@
     const footer = document.querySelector('footer');
     const totalSongs = 138;
     const totalSections = 15;
+    let selectedSection = null;
 
     const normalize = (text) => text
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[̀-ͯ]/g, '')
       .trim();
 
     const plural = (number, singular, pluralText) => number === 1 ? singular : pluralText;
@@ -1199,41 +1188,84 @@
       header.setAttribute('aria-expanded', String(open));
     }
 
+    function updateActiveChip() {
+      sectionNav.querySelectorAll('.section-chip').forEach((button) => {
+        button.classList.toggle('active', button.dataset.target === (selectedSection ? selectedSection.id : ''));
+      });
+    }
+
+    function showOnlySelectedSection() {
+      sections.forEach((section) => {
+        section.classList.remove('hidden');
+        const isSelected = selectedSection === section;
+        section.classList.toggle('inactive', !isSelected);
+
+        section.querySelectorAll('.song-item').forEach((item) => item.classList.remove('hidden'));
+
+        const countLabel = section.querySelector('.section-count');
+        const total = Number(countLabel.dataset.total);
+        countLabel.textContent = `${total} ${plural(total, 'canto', 'cantos')}`;
+        setSectionOpen(section, isSelected);
+      });
+
+      if (selectedSection) {
+        const title = selectedSection.querySelector('.section-title').textContent;
+        const total = Number(selectedSection.querySelector('.section-count').dataset.total);
+        summary.textContent = `${title}: ${total} ${plural(total, 'canto', 'cantos')}.`;
+      } else {
+        summary.textContent = `Elige un momento litúrgico para mostrar sus cantos. ${totalSongs} cantos en ${totalSections} secciones.`;
+      }
+
+      noResults.style.display = 'none';
+      updateActiveChip();
+    }
+
     function updateSearch() {
       const query = normalize(searchInput.value);
+
+      if (!query) {
+        showOnlySelectedSection();
+        return;
+      }
+
+      selectedSection = null;
       let visibleSongs = 0;
       let visibleSections = 0;
 
       sections.forEach((section) => {
         let sectionVisible = 0;
-        const title = section.querySelector('.section-title').textContent;
         const items = Array.from(section.querySelectorAll('.song-item'));
 
         items.forEach((item) => {
           const searchable = normalize(item.dataset.search || item.textContent);
-          const match = !query || searchable.includes(query);
+          const match = searchable.includes(query);
           item.classList.toggle('hidden', !match);
           if (match) sectionVisible++;
         });
 
         const hasVisible = sectionVisible > 0;
         section.classList.toggle('hidden', !hasVisible);
-        if (query && hasVisible) setSectionOpen(section, true);
+        section.classList.remove('inactive');
+        if (hasVisible) setSectionOpen(section, true);
 
         const countLabel = section.querySelector('.section-count');
         const total = Number(countLabel.dataset.total);
-        countLabel.textContent = query
-          ? `${sectionVisible}/${total} ${plural(sectionVisible, 'canto', 'cantos')}`
-          : `${total} ${plural(total, 'canto', 'cantos')}`;
+        countLabel.textContent = `${sectionVisible}/${total} ${plural(sectionVisible, 'canto', 'cantos')}`;
 
         visibleSongs += sectionVisible;
         if (hasVisible) visibleSections++;
       });
 
       noResults.style.display = visibleSongs === 0 ? 'block' : 'none';
-      summary.textContent = query
-        ? `${visibleSongs} ${plural(visibleSongs, 'canto encontrado', 'cantos encontrados')} en ${visibleSections} ${plural(visibleSections, 'sección', 'secciones')}.`
-        : `${totalSongs} cantos en ${totalSections} secciones.`;
+      summary.textContent = `${visibleSongs} ${plural(visibleSongs, 'canto encontrado', 'cantos encontrados')} en ${visibleSections} ${plural(visibleSections, 'sección', 'secciones')}.`;
+      updateActiveChip();
+    }
+
+    function selectSection(section) {
+      selectedSection = section;
+      searchInput.value = '';
+      showOnlySelectedSection();
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function buildSectionNav() {
@@ -1241,12 +1273,9 @@
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'section-chip';
+        button.dataset.target = section.id;
         button.textContent = section.querySelector('.section-title').textContent;
-        button.addEventListener('click', () => {
-          section.classList.remove('hidden');
-          setSectionOpen(section, true);
-          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+        button.addEventListener('click', () => selectSection(section));
         sectionNav.appendChild(button);
       });
     }
@@ -1254,16 +1283,12 @@
     sections.forEach((section) => {
       const header = section.querySelector('.section-header');
       header.addEventListener('click', () => {
+        if (selectedSection !== section && !searchInput.value.trim()) {
+          selectSection(section);
+          return;
+        }
         setSectionOpen(section, section.classList.contains('collapsed'));
       });
-    });
-
-    document.getElementById('expand-all').addEventListener('click', () => {
-      sections.filter((section) => !section.classList.contains('hidden')).forEach((section) => setSectionOpen(section, true));
-    });
-
-    document.getElementById('collapse-all').addEventListener('click', () => {
-      sections.forEach((section) => setSectionOpen(section, false));
     });
 
     document.getElementById('clear-search').addEventListener('click', () => {

@@ -4,6 +4,16 @@
 
 > **Cantare, Laudare, Orare — in Choro**
 
+## Sitio público
+
+El cancionero está publicado en GitHub Pages:
+
+```text
+https://edgar-apg.github.io/SyntaxLaudis-Pages
+```
+
+Después de cada `git push`, GitHub Pages puede tardar uno o dos minutos en reflejar los cambios. Si el navegador conserva una versión anterior, conviene recargar con `Ctrl + F5` o abrir la página con un parámetro temporal, por ejemplo `?v=2`.
+
 ## Estado de esta versión
 
 Esta versión visual queda alineada con el estilo de **Ordo Laudis**:
@@ -13,57 +23,161 @@ Esta versión visual queda alineada con el estilo de **Ordo Laudis**:
 - cruz central como marca visual;
 - tarjetas con bordes definidos;
 - buscador con coincidencias sin depender de acentos;
-- índice rápido por secciones;
-- secciones colapsables;
-- botón dinámico para volver arriba.
+- índice rápido por momento litúrgico;
+- vista limpia: ninguna sección se despliega hasta elegirla;
+- botón circular y dinámico para volver arriba.
 
-El cancionero contiene actualmente **138 cantos** distribuidos en **15 secciones**.
+El cancionero contiene actualmente **138 cantos** distribuidos en **15 secciones**. En la página pública, las secciones permanecen ocultas al inicio y sólo se muestra la sección elegida desde el índice rápido; al buscar por nombre se muestran automáticamente las coincidencias.
 
-## Uso
+## Estructura del proyecto
 
-1. Abre `index.html` desde GitHub Pages.
-2. Usa el buscador para encontrar un canto por nombre o por sección.
-3. Usa el índice rápido para saltar al momento litúrgico correspondiente.
-4. Abre el PDF del canto en una pestaña nueva.
-
-## Estructura esperada
-
-La página espera que los PDFs se conserven en carpetas por sección, por ejemplo:
+Syntax Laudis se trabaja con dos repositorios complementarios:
 
 ```text
-SyntaxLaudis-Pages/
-├── index.html
-├── README.md
-├── Entrada/
-│   └── Nombre_del_canto.pdf
-├── Comunion/
-│   └── Nombre_del_canto.pdf
-└── ...
+Eclesia/
+├── Cancionero/                  repositorio privado: SyntaxLaudis
+│   ├── Cantos/                  archivos .chordpro por sección
+│   ├── PDFs/                    PDFs generados, ignorados por Git
+│   ├── config/
+│   │   └── mi-estilo.json       estilo de exportación
+│   └── exportar-cantos.ps1      script principal
+│
+└── SyntaxLaudis-Pages/          repositorio público: GitHub Pages
+    ├── Adoracion/
+    ├── Comunion/
+    ├── Entrada/
+    ├── ...
+    ├── index.html               página pública del cancionero
+    └── README.md
 ```
 
-## Cómo agregar un canto
+La fuente de trabajo está en el repositorio privado **SyntaxLaudis**. La página publicada vive en **SyntaxLaudis-Pages**.
 
-En `index.html`, localiza la sección correspondiente y agrega una entrada como esta dentro de la lista:
+## Flujo de trabajo recomendado
 
-```html
-<li class="song-item" data-search="Entrada Nombre del canto">
-  <a class="song-link" href="Entrada/Nombre_del_canto.pdf" target="_blank" rel="noopener">Nombre del canto</a>
-</li>
+Cuando se agrega o edita un canto:
+
+1. Editar el archivo `.chordpro` en VS Code dentro del repositorio privado `Cancionero`.
+2. Ejecutar el script principal en PowerShell:
+
+```powershell
+cd "C:\Users\edgar\OneDrive\Eclesia\Cancionero"
+.\exportar-cantos.ps1
 ```
 
-Recomendaciones:
+3. Elegir en el script la opción correspondiente:
+   - opción 1: exportar un canto;
+   - opción 2: exportar todo el cancionero.
 
-- usa nombres de archivo sin acentos cuando sea posible;
-- evita espacios en nombres de archivo nuevos y prefiere guiones bajos;
-- verifica que el enlace coincida exactamente con el nombre del PDF y la carpeta;
-- conserva la sección litúrgica más útil para el coro.
+El script se encarga de:
 
-## Publicación en GitHub Pages
+- exportar el PDF con ChordPro;
+- copiar el PDF al repositorio `SyntaxLaudis-Pages`;
+- actualizar `index.html`;
+- hacer `push` a GitHub en ambos repositorios.
 
-1. Sube o reemplaza `index.html` y `README.md` en el repositorio `SyntaxLaudis-Pages`.
-2. Conserva intactas las carpetas de PDFs.
-3. Haz commit en la rama publicada por GitHub Pages.
-4. Abre la página y, si el navegador muestra una versión anterior, prueba recargar con `Ctrl + F5` o agregar un parámetro temporal como `?v=2`.
+## Estructura básica de un archivo `.chordpro`
+
+```chordpro
+{title: Nombre del canto}
+{subtitle: Autor}
+{key: G}
+{capo: 2}
+
+[G]Primera línea de [C]letra
+[D]Segunda línea de [G]letra
+
+{start_of_chorus}
+[Em]Estribillo primera [C]línea
+[G]Estribillo segunda [D]línea
+{end_of_chorus}
+```
+
+La directiva `{title:}` es importante porque el script la usa para extraer el nombre correcto del canto y agregarlo al índice público.
+
+## Comandos Git útiles
+
+Ver el estado de cambios:
+
+```powershell
+git status
+```
+
+Subir cambios manualmente:
+
+```powershell
+git add .
+git commit -m "Descripción del cambio"
+git push
+```
+
+Bajar cambios desde GitHub antes de trabajar en otra computadora:
+
+```powershell
+git pull
+```
+
+## Configuración en una PC nueva
+
+1. Instalar Strawberry Perl.
+2. Instalar ChordPro desde PowerShell:
+
+```powershell
+cpanm App::Music::ChordPro
+```
+
+3. Verificar la instalación:
+
+```powershell
+chordpro --version
+```
+
+4. Instalar Git.
+5. Configurar identidad en Git:
+
+```powershell
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@correo.com"
+```
+
+6. Clonar los repositorios:
+
+```powershell
+cd "C:\Users\edgar\OneDrive\Eclesia"
+git clone https://github.com/edgar-apg/SyntaxLaudis.git Cancionero
+git clone https://github.com/edgar-apg/SyntaxLaudis-Pages.git
+```
+
+7. Probar la exportación con el script:
+
+```powershell
+cd "C:\Users\edgar\OneDrive\Eclesia\Cancionero"
+.\exportar-cantos.ps1
+```
+
+## Archivos clave
+
+### `config\mi-estilo.json`
+
+Define fuentes, tamaños y estilo visual del PDF exportado desde ChordPro.
+
+### `exportar-cantos.ps1`
+
+Script principal. Exporta cantos, copia PDFs, actualiza `index.html` y hace `push` a GitHub automáticamente.
+
+### `SyntaxLaudis-Pages\index.html`
+
+Página web pública del cancionero. Se actualiza cuando el script modifica el índice y publica los cambios.
+
+## Recomendaciones de mantenimiento
+
+- Hacer `git pull` antes de empezar a trabajar, especialmente si se alterna entre laptop y PC.
+- Hacer `git status` antes y después de ejecutar el script.
+- Evitar tildes y espacios en nombres de archivos y carpetas.
+- Usar guiones bajos en nombres de archivo, por ejemplo: `Pescador_de_hombres.chordpro`.
+- Verificar que cada `.chordpro` tenga `{title:}`.
+- Revisar el sitio público después de cada publicación.
+- Si un archivo `.chordpro` está vacío, ChordPro puede omitirlo con advertencia; eso no necesariamente indica un error del script.
 
 ## Aviso y créditos
 
@@ -81,4 +195,4 @@ Syntax Laudis forma parte del mismo ecosistema de herramientas personales que **
 
 ## Nota técnica
 
-La página está hecha sólo con HTML, CSS y JavaScript básico. No requiere servidor, base de datos ni instalación adicional.
+La página está hecha sólo con HTML, CSS y JavaScript básico. No requiere servidor, base de datos ni instalación adicional para consultarse desde GitHub Pages.
