@@ -1,24 +1,25 @@
 # Syntax Laudis
 
-Cancionero litúrgico en PDF para consulta rápida del coro.
-
-El sitio permite buscar cantos por nombre y navegar por momento litúrgico. Los PDFs se abren en una pestaña nueva para conservar el lugar en el índice.
+Cancionero litúrgico en PDF para apoyo del coro.
 
 ## Sitio público
 
+```text
 https://edgar-apg.github.io/SyntaxLaudis-Pages
+```
 
 ## Contenido
 
-Los cantos están organizados por secciones litúrgicas y temáticas, como Entrada, Señor ten piedad, Gloria, Aleluya, Ofertorio, Santo, Comunión, Salida, Adoración, Marianos, Dominicos, Navidad y otras categorías de uso pastoral.
+Los cantos están organizados por momentos litúrgicos y secciones pastorales para facilitar su consulta en ensayo, celebración, impresión o lectura en tablet.
 
 ## Formato
 
-Los cantos se preparan en formato ChordPro y se exportan a PDF para facilitar su uso en ensayo, celebración litúrgica, impresión o lectura en tablet.
+Los cantos se preparan en formato ChordPro y se exportan a PDF. Los PDFs conservan letra y acordes, de modo que puedan servir tanto a quienes cantan como a quienes acompañan con instrumentos.
 
 ## Aviso
 
 Syntax Laudis es un cancionero de consulta para uso pastoral y comunitario.
-Los cantos, textos, melodías, arreglos y derechos pertenecen a sus respectivos autores o titulares.
 
-Este proyecto no pretende atribuirse autoría sobre los cantos incluidos.
+Los cantos, textos, melodías, armonizaciones, arreglos y derechos pertenecen a sus respectivos autores, compositores, editoriales o titulares.
+
+Este proyecto no pretende atribuirse autoría sobre los cantos incluidos ni sustituir cantorales oficiales, partituras autorizadas, licencias de uso musical o criterios pastorales de cada comunidad.
