@@ -186,7 +186,33 @@
     main { flex: 1 0 auto; }
     footer { margin-top: auto; }
     #catalog-summary { display: none !important; }
-  </style>
+  
+    /* etapa-9i-home-canticle */
+    .home-canticle {
+      width: min(720px, calc(100% - 2rem));
+      margin: clamp(1.5rem, 5vw, 3rem) auto 0;
+      padding: clamp(1rem, 3vw, 1.6rem);
+      text-align: center;
+      color: var(--ink);
+      font-style: italic;
+      font-size: clamp(1rem, 1.9vw, 1.18rem);
+      line-height: 1.75;
+      opacity: .92;
+    }
+    .home-canticle p + p {
+      margin-top: .18rem;
+    }
+    .home-canticle-ref {
+      margin-top: .95rem !important;
+      color: #8b1a1a;
+      font-style: normal;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+    .home-canticle.is-hidden {
+      display: none;
+    }
+</style>
 </head>
 <body>
   <a class="skip-link" href="#catalogo">Saltar al cancionero</a>
@@ -843,7 +869,17 @@
     </section>
 
 
-  </main>
+  
+    <section class="home-canticle" id="home-canticle" aria-label="Cantico inicial">
+      <p>&iexcl;Alabad a mi Dios con tambores,</p>
+      <p>elevad cantos al Se&ntilde;or con c&iacute;taras,</p>
+      <p>ofrecedle los acordes de un salmo de alabanza,</p>
+      <p>ensalzad e invocad su nombre!</p>
+      <p>Porque el Se&ntilde;or es un Dios quebrantador de guerras,</p>
+      <p>su nombre es el Se&ntilde;or.</p>
+      <p class="home-canticle-ref">C&aacute;ntico. Jdt 16, 2-3. 15-19</p>
+    </section>
+</main>
 
   <footer>
     Cantos, letras, melod&iacute;as y arreglos pertenecen a sus autores. Cancionero pastoral no oficial. <a href="https://github.com/edgar-apg/SyntaxLaudis-Pages#readme" target="_blank" rel="noopener">Aviso y cr&eacute;ditos</a>.
@@ -1015,6 +1051,90 @@
     buildSectionNav();
     updateSearch();
     updateTopButton();
-  </script>
+  
+    /* etapa-9i-home-canticle-js */
+    (() => {
+      const canticle = document.getElementById('home-canticle');
+      if (!canticle) return;
+
+      const search = document.getElementById('search') || document.querySelector('input[type="search"]');
+      const clear = document.getElementById('clear-search');
+
+      const sectionButtons = Array.from(document.querySelectorAll('button')).filter((button) => {
+        if (button.id === 'clear-search') return false;
+        const text = (button.textContent || '').trim().toLowerCase();
+        if (button.hasAttribute('data-section')) return true;
+        if (button.hasAttribute('data-section-target')) return true;
+        if (button.classList.contains('section-button')) return true;
+        if (button.classList.contains('tab-button')) return true;
+        return [
+          'entrada',
+          'senor, ten piedad',
+          'gloria',
+          'aleluya',
+          'honor y gloria',
+          'ofertorio',
+          'santo',
+          'padre nuestro',
+          'cordero de dios',
+          'comunion',
+          'salida',
+          'adoracion',
+          'aspersion',
+          'alabanza',
+          'dominicos',
+          'marianos',
+          'reflexion',
+          'navidad',
+          'villancicos',
+          'esquemas completos'
+        ].includes(text);
+      });
+
+      const isVisible = (element) => {
+        if (!element) return false;
+        const style = window.getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden') return false;
+        return element.offsetParent !== null || style.position === 'fixed';
+      };
+
+      const hasVisibleCatalogContent = () => {
+        const candidates = document.querySelectorAll('.song-card, .song-item, .catalog-card, .catalog-item, .song-list li, article');
+        return Array.from(candidates).some((element) => isVisible(element));
+      };
+
+      const hasActiveSection = () => {
+        return sectionButtons.some((button) => {
+          return button.classList.contains('active') ||
+                 button.classList.contains('is-active') ||
+                 button.classList.contains('selected') ||
+                 button.getAttribute('aria-pressed') === 'true' ||
+                 button.getAttribute('aria-selected') === 'true';
+        });
+      };
+
+      const updateCanticle = () => {
+        const hasQuery = Boolean(search && search.value && search.value.trim());
+        const shouldHide = hasQuery || hasActiveSection() || hasVisibleCatalogContent();
+        canticle.classList.toggle('is-hidden', shouldHide);
+      };
+
+      if (search) {
+        search.addEventListener('input', () => window.requestAnimationFrame(updateCanticle));
+      }
+
+      if (clear) {
+        clear.addEventListener('click', () => window.setTimeout(updateCanticle, 0));
+      }
+
+      sectionButtons.forEach((button) => {
+        button.addEventListener('click', () => window.setTimeout(updateCanticle, 0));
+      });
+
+      document.addEventListener('DOMContentLoaded', updateCanticle);
+      window.addEventListener('load', updateCanticle);
+      updateCanticle();
+    })();
+</script>
 </body>
 </html>
