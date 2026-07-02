@@ -175,6 +175,17 @@
       footer { padding: .62rem .75rem; font-size: .7rem; line-height: 1.25; }
       .to-top { right: .75rem; width: 2.65rem; height: 2.65rem; }
     }
+  
+    /* etapa-9h-sticky-footer */
+    html { min-height: 100%; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    main { flex: 1 0 auto; }
+    footer { margin-top: auto; }
+    #catalog-summary { display: none !important; }
   </style>
 </head>
 <body>
@@ -835,7 +846,7 @@
   </main>
 
   <footer>
-    Cantos, letras, melod&iacute;as y arreglos pertenecen a sus autores. Cancionero pastoral no oficial. <a href="aviso.html">Aviso y cr&eacute;ditos</a>.
+    Cantos, letras, melod&iacute;as y arreglos pertenecen a sus autores. Cancionero pastoral no oficial. <a href="https://github.com/edgar-apg/SyntaxLaudis-Pages#readme" target="_blank" rel="noopener">Aviso y cr&eacute;ditos</a>.
   </footer>
 
   <button class="to-top" id="to-top" type="button" aria-label="Volver arriba">↑</button>
@@ -893,7 +904,7 @@
         const total = Number(selectedSection.querySelector('.section-count').dataset.total);
         summary.textContent = `${title}: ${total} ${plural(total, 'canto', 'cantos')}.`;
       } else {
-        summary.textContent = `Elige un momento liturgico para mostrar sus cantos. ${totalSongs} cantos, ${totalVersions} versiones/PDFs, ${totalSections} secciones.`;
+        summary.textContent = '';
       }
 
       noResults.style.display = 'none';

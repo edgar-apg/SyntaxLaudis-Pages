@@ -1,19 +1,44 @@
 # Syntax Laudis
 
-**Syntax Laudis** es un cancionero litúrgico de consulta pastoral para coro.
+**Syntax Laudis** es un cancionero lit&uacute;rgico de consulta pastoral y coral.
 
-Sitio público:
+Sitio p&uacute;blico:
 
 ```text
 https://edgar-apg.github.io/SyntaxLaudis-Pages/
 ```
 
-## Qué contiene
+## Aviso y cr&eacute;ditos
 
-El sitio organiza cantos por secciones litúrgicas y pastorales:
+Syntax Laudis es una herramienta de consulta pastoral. No es una publicaci&oacute;n oficial ni sustituye los libros lit&uacute;rgicos aprobados.
+
+Los cantos, letras, melod&iacute;as, armonizaciones y arreglos pertenecen a sus respectivos autores.
+
+El sitio organiza materiales para facilitar la consulta del coro y el servicio lit&uacute;rgico.
+
+## Uso previsto
+
+- Consulta pastoral.
+- Apoyo al canto lit&uacute;rgico.
+- Organizaci&oacute;n interna del repertorio coral.
+
+## Mantenimiento
+
+El sitio se genera desde archivos `.chordpro` del repositorio privado de trabajo.
+
+Flujo general:
+
+```text
+.chordpro
+-> PDF
+-> index.html
+-> GitHub Pages
+```
+
+## Secciones
 
 - Entrada
-- Señor, ten piedad
+- Se&ntilde;or, ten piedad
 - Gloria
 - Aleluya
 - Honor y gloria
@@ -21,46 +46,16 @@ El sitio organiza cantos por secciones litúrgicas y pastorales:
 - Santo
 - Padre Nuestro
 - Cordero de Dios
-- Comunión
+- Comuni&oacute;n
 - Salida
-- Adoración
-- Aspersión
+- Adoraci&oacute;n
+- Aspersi&oacute;n
 - Alabanza
 - Dominicos
 - Marianos
-- Reflexión
+- Reflexi&oacute;n
 - Navidad
 - Villancicos
 - Esquemas completos
 
-## Cómo se mantiene
-
-El sitio se genera a partir de archivos `.chordpro` del repositorio privado de trabajo.
-
-Flujo general:
-
-```text
-.chordpro
-↓
-exportar-cantos-v2.ps1
-↓
-PDF
-↓
-generar-index-v2.ps1
-↓
-index.html
-↓
-GitHub Pages
-```
-
-## Aviso
-
-Cantos, letras, melodías y arreglos pertenecen a sus respectivos autores.
-
-Syntax Laudis es una herramienta de consulta pastoral y de apoyo al canto litúrgico. No es una publicación oficial ni sustituye los libros litúrgicos aprobados.
-
-## Créditos
-
-Proyecto preparado para uso pastoral y coral.
-
-> Cantare, Laudare, Orare — in Choro
+> Cantare, Laudare, Orare - in Choro
