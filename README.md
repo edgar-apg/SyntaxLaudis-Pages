@@ -1,28 +1,36 @@
-# Syntax Laudis
+# Syntax Laudis ✥
 
-**Syntax Laudis** es un cancionero lit&uacute;rgico de consulta pastoral y coral.
+**Syntax Laudis** es un cancionero litúrgico de consulta pastoral y coral.
 
-Sitio p&uacute;blico:
+Nace como una herramienta sencilla para servir al canto, la oración y la vida litúrgica de la comunidad, desde una sensibilidad católica y con especial aprecio por el espíritu dominico: **la alabanza, la bendición y la predicación**.
 
-```text
-https://edgar-apg.github.io/SyntaxLaudis-Pages/
-```
+## Aviso y créditos 🗒️
 
-## Aviso y cr&eacute;ditos
+Syntax Laudis es una herramienta de consulta pastoral. No es una publicación oficial ni sustituye los libros litúrgicos aprobados.
 
-Syntax Laudis es una herramienta de consulta pastoral. No es una publicaci&oacute;n oficial ni sustituye los libros lit&uacute;rgicos aprobados.
+Los cantos, letras, melodías, armonizaciones y arreglos pertenecen a sus respectivos autores.
 
-Los cantos, letras, melod&iacute;as, armonizaciones y arreglos pertenecen a sus respectivos autores.
+El sitio organiza materiales para facilitar la consulta del coro y el servicio litúrgico.
 
-El sitio organiza materiales para facilitar la consulta del coro y el servicio lit&uacute;rgico.
+Este proyecto no representa oficialmente a la Orden de Predicadores ni a las Fraternidades Laicales Dominicanas; es una iniciativa personal de servicio pastoral y musical.
 
-## Uso previsto
+## Espíritu dominico 🤍🖤
+
+Desde el carisma dominico, la música litúrgica puede ser también una forma de contemplar, alabar y anunciar.
+
+Syntax Laudis quiere servir modestamente a esa intuición: que el canto ayude a la asamblea a orar mejor, a celebrar con mayor dignidad y a disponer el corazón para la Palabra de Dios.
+
+> *Contemplare et contemplata aliis tradere.*  
+> Contemplar y dar a los demás lo contemplado.
+
+## Uso previsto 🎼
 
 - Consulta pastoral.
-- Apoyo al canto lit&uacute;rgico.
-- Organizaci&oacute;n interna del repertorio coral.
+- Apoyo al canto litúrgico.
+- Organización interna del repertorio coral.
+- Servicio a comunidades, coros y celebraciones.
 
-## Mantenimiento
+## Mantenimiento 👷‍♂️
 
 El sitio se genera desde archivos `.chordpro` del repositorio privado de trabajo.
 
@@ -35,10 +43,10 @@ Flujo general:
 -> GitHub Pages
 ```
 
-## Secciones
+## Secciones 📌
 
 - Entrada
-- Se&ntilde;or, ten piedad
+- Señor, ten piedad
 - Gloria
 - Aleluya
 - Honor y gloria
@@ -46,16 +54,16 @@ Flujo general:
 - Santo
 - Padre Nuestro
 - Cordero de Dios
-- Comuni&oacute;n
+- Comunión
 - Salida
-- Adoraci&oacute;n
-- Aspersi&oacute;n
+- Adoración
+- Aspersión
 - Alabanza
 - Dominicos
 - Marianos
-- Reflexi&oacute;n
+- Reflexión
 - Navidad
 - Villancicos
 - Esquemas completos
 
-> Cantare, Laudare, Orare - in Choro
+*Laudare, Benedicere, Praedicare — in Choro.* 🏁
