@@ -776,10 +776,12 @@
     <section class="section collapsed" id="sec-marianos" data-section="Marianos">
       <button class="section-header" type="button" aria-expanded="false" aria-controls="sec-marianos-list">
         <span class="section-title">Marianos</span>
-        <span class="section-meta"><span class="section-count" data-total="0">0 cantos</span><span class="chevron" aria-hidden="true">▼</span></span>
+        <span class="section-meta"><span class="section-count" data-total="1">1 canto</span><span class="chevron" aria-hidden="true">▼</span></span>
       </button>
       <ul class="song-list" id="sec-marianos-list">
-        <li class="song-item empty-item" data-search="Marianos sin contenido"><span class="empty-note">Sin cantos registrados todavia.</span></li>
+        <li class="song-item" data-search="Marianos Dijiste S&#237; Luispo (Luis Poveda) &amp; La Anunciaci&#243;n mariano mariano Original C  1p-normal">
+          <a class="song-link" href="Marianos/Dijiste_Si.pdf" target="_blank" rel="noopener"><span class="song-name">Dijiste S&#237;</span><span class="song-badges"><span class="badge">mariano</span></span></a>
+        </li>
       </ul>
     </section>
 
@@ -813,8 +815,12 @@
         <li class="song-item" data-search="Reflexion El encuentro Edu L&#243;pez todo-el-ano reflexion, exequias Original Em  1p-normal">
           <a class="song-link" href="Reflexion/El_encuentro.pdf" target="_blank" rel="noopener"><span class="song-name">El encuentro</span><span class="song-badges"><span class="badge">exequias</span></span></a>
         </li>
-        <li class="song-item" data-search="Reflexion Manos de gigante J&#233;sed todo-el-ano alabanza Original G  1p-normal">
-          <a class="song-link" href="Reflexion/Manos_de_gigante.pdf" target="_blank" rel="noopener"><span class="song-name">Manos de gigante</span><span class="song-badges"><span class="badge">alabanza</span></span></a>
+        <li class="song-item variant-group" data-search="Reflexion Manos de gigante J&#233;sed todo-el-ano alabanza Original G  1p-normal E E  1p-normal">
+          <div class="song-main"><span class="song-name">Manos de gigante</span><span class="song-badges"><span class="badge">2 versiones</span><span class="badge">alabanza</span></span></div>
+          <div class="variant-row">
+            <a class="variant-link" href="Reflexion/Manos_de_gigante.pdf" target="_blank" rel="noopener">Original<span class="variant-meta">G</span></a>
+            <a class="variant-link" href="Reflexion/Manos_de_gigante_MI.pdf" target="_blank" rel="noopener">E<span class="variant-meta">E</span></a>
+          </div>
         </li>
         <li class="song-item" data-search="Reflexion S&#225;name, Se&#241;or  todo-el-ano reflexion, sanacion, oracion Original D  1p-normal">
           <a class="song-link" href="Reflexion/Saname_Senor.pdf" target="_blank" rel="noopener"><span class="song-name">S&#225;name, Se&#241;or</span><span class="song-badges"></span></a>
@@ -1007,8 +1013,8 @@
     const sectionNav = document.getElementById('section-nav');
     const toTopButton = document.getElementById('to-top');
     const footer = document.querySelector('footer');
-    const totalSongs = 159;
-    const totalVersions = 178;
+    const totalSongs = 160;
+    const totalVersions = 180;
     const totalSections = 20;
     let selectedSection = null;
 
