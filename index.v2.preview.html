@@ -851,6 +851,24 @@
       </ul>
     </section>
 
+    <section class="section collapsed" id="sec-franciscanos" data-section="Franciscanos">
+      <button class="section-header" type="button" aria-expanded="false" aria-controls="sec-franciscanos-list">
+        <span class="section-title">Franciscanos</span>
+        <span class="section-meta"><span class="section-count" data-total="3">3 cantos</span><span class="chevron" aria-hidden="true">▼</span></span>
+      </button>
+      <ul class="song-list" id="sec-franciscanos-list">
+        <li class="song-item" data-search="Franciscanos Cuando sanaste III Festival de la Canci&#243;n Franciscana solemnidad franciscano Original   1p-normal">
+          <a class="song-link" href="Franciscanos/Cuando_sanaste.pdf" target="_blank" rel="noopener"><span class="song-name">Cuando sanaste</span><span class="song-badges"><span class="badge">solemnidad</span></span></a>
+        </li>
+        <li class="song-item" data-search="Franciscanos Paz y bien en el Se&#241;or III Festival de la Canci&#243;n Franciscana solemnidad franciscano Original   1p-normal">
+          <a class="song-link" href="Franciscanos/Paz_y_bien_en_el_Senor.pdf" target="_blank" rel="noopener"><span class="song-name">Paz y bien en el Se&#241;or</span><span class="song-badges"><span class="badge">solemnidad</span></span></a>
+        </li>
+        <li class="song-item" data-search="Franciscanos Ven hermano, ven hermana I Festival de la Canci&#243;n Franciscana solemnidad franciscano Original   1p-normal">
+          <a class="song-link" href="Franciscanos/Ven_hermano_ven_hermana.pdf" target="_blank" rel="noopener"><span class="song-name">Ven hermano, ven hermana</span><span class="song-badges"><span class="badge">solemnidad</span></span></a>
+        </li>
+      </ul>
+    </section>
+
     <section class="section collapsed" id="sec-reflexion" data-section="Reflexion">
       <button class="section-header" type="button" aria-expanded="false" aria-controls="sec-reflexion-list">
         <span class="section-title">Reflexion</span>
@@ -1094,9 +1112,9 @@
     const sectionNav = document.getElementById('section-nav');
     const toTopButton = document.getElementById('to-top');
     const footer = document.querySelector('footer');
-    const totalSongs = 180;
-    const totalVersions = 206;
-    const totalSections = 20;
+    const totalSongs = 183;
+    const totalVersions = 209;
+    const totalSections = 21;
     let selectedSection = null;
 
     const normalize = (text) => text
@@ -1282,6 +1300,7 @@
           'alabanza',
           'dominicos',
           'marianos',
+          'franciscanos',
           'reflexion',
           'navidad',
           'villancicos',
